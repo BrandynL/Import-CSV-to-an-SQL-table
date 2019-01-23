@@ -19,8 +19,8 @@ try{
     $db = new PDO($db_info, $db_user, $db_pass);
     $db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 } catch (exception $e) {
-    echo 'could not connect to database';
-    echo $e->getMessage();
+    die();
+    // echo $e->getMessage();
 }
 
 $sql = 'TRUNCATE '. $table_name;
