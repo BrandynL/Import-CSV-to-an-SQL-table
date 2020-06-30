@@ -2,7 +2,7 @@
 /**
  * Takes a CSV from somewhere on the current server and imports it into the specified database using PDO after truncating the table.
  * by Brandyn L
- * https://the-dev.ninja/
+ * https://brandynlord.com/
  */
 
 // configure your settings
