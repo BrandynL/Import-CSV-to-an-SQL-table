@@ -1,47 +1,53 @@
 <?php
-/**
- * Takes a CSV from somewhere on the current server and imports it into the specified database using PDO after truncating the table.
- * by Brandyn L
- * https://brandynlord.com/
- */
+require __DIR__ . '/vendor/autoload.php';
+
+use Symfony\Component\Dotenv\Dotenv;
+
+// load environmenal variables
+$dotenv = new Dotenv();
+$dotenv->loadEnv(__DIR__ . '/.env');
 
 // configure your settings
-$table_name = 'sql_table_name';
-$path_to_file = '/path_to_file.csv';
-$delimiter = ',';
+$table_name = $_ENV["php_sql_import_table_name"];
+$path_to_file = $_ENV["php_sql_import_path_to_file"];
+$delimiter = $_ENV["php_sql_import_delimiter"];
 
 // You can probably store the following as environemental variables
-$db_info = 'mysql:host=127.0.0.1;dbname=database-name;';
-$db_user = 'user';
-$db_pass ='pass';
+$db_info = $_ENV["php_sql_import_db_connection"];
+$db_user = $_ENV["php_sql_import_db_user"];
+$db_pass = $_ENV["php_sql_import_db_pass"];
 
-try{
+try {
     $db = new PDO($db_info, $db_user, $db_pass);
-    $db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (exception $e) {
-    die();
-    // echo $e->getMessage();
+    error_log($e->getMessage());
+    return false;
 }
 
-$sql = 'TRUNCATE '. $table_name;
-$db->query($sql);
+if ($_ENV["php_sql_import_truncate_table"]) {
 
-ini_set('auto_detect_line_endings',TRUE);
+    $sql = 'TRUNCATE ' . $table_name;
+    $db->query($sql);
+}
+
+ini_set('auto_detect_line_endings', TRUE);
 
 $f = fopen($path_to_file, 'r');
 $data = [];
 
-while($d = fgetcsv($f, 1024, $delimiter)) {    
+while ($d = fgetcsv($f, 1024, $delimiter)) {
     $data[] = $d;
 }
+fclose($f);
 
-$sql = 'INSERT INTO '.$table_name.' ('.implode($data[0], ', ').' ) VALUES ';
+$sql = 'INSERT INTO ' . $table_name . ' (' . implode($data[0], ', ') . ' ) VALUES ';
 $i = 1;
 $c = count($data);
 
-for ($i = 1;$i < $c; $i++) {
-    $sql .= '("'.implode($data[$i], '","');
-    if ($i != ($c - 1) ){
+for ($i = 1; $i < $c; $i++) {
+    $sql .= '("' . implode($data[$i], '","');
+    if ($i != ($c - 1)) {
         $sql .= '"), ';
     } else {
         $sql .= '") ';
