@@ -1,21 +1,16 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
+use PHPSQLImporter\PHPSQLImporter;
 use Symfony\Component\Dotenv\Dotenv;
 
 // load environmenal variables
 $dotenv = new Dotenv();
 $dotenv->loadEnv(__DIR__ . '/.env');
 
-// configure your settings
-$table_name = $_ENV["php_sql_import_table_name"];
-$path_to_file = $_ENV["php_sql_import_path_to_file"];
-$delimiter = $_ENV["php_sql_import_delimiter"];
 
-// You can probably store the following as environemental variables
-$db_info = $_ENV["php_sql_import_db_connection"];
-$db_user = $_ENV["php_sql_import_db_user"];
-$db_pass = $_ENV["php_sql_import_db_pass"];
+// instanciate importer class
+$importer = new PHPSQLImporter();
 
 try {
     $db = new PDO($db_info, $db_user, $db_pass);
