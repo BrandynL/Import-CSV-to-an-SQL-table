@@ -36,12 +36,12 @@ while ($d = fgetcsv($f, 1024, $delimiter)) {
 }
 fclose($f);
 
-$sql = 'INSERT INTO ' . $table_name . ' (' . implode($data[0], ', ') . ' ) VALUES ';
+$sql = 'INSERT INTO ' . $table_name . ' (' . implode(', ', $data[0]) . ' ) VALUES ';
 $i = 1;
 $c = count($data);
 
 for ($i = 1; $i < $c; $i++) {
-    $sql .= '("' . implode($data[$i], '","');
+    $sql .= '("' . implode('","', $data[$i]);
     if ($i != ($c - 1)) {
         $sql .= '"), ';
     } else {
